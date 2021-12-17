@@ -1,6 +1,7 @@
 pragma solidity 0.8.10;
 import './ERC20Token.sol';
 // Override parent variable
+// multiple contracts can be inherited into a single contract.
 contract MyContract is ERC20Token{
     string public symbol;
     address[] public owners;
