@@ -1,3 +1,7 @@
+// const Web3 = require("web3");
+// const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+// window.web3 = web3;
+
 App = {
   loading: false,
   contracts: {},
@@ -10,12 +14,13 @@ App = {
     await App.render();
   },
 
-  // https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8
   loadWeb3: async () => {
     if (typeof web3 !== "undefined") {
-      console.log(Web3, web3);
+      console.log(web3);
+
       App.web3Provider = web3.currentProvider;
-      web3 = new Web3(web3.currentProvider);
+      web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+      //   web3 = new Web3(web3.currentProvider);
     } else {
       window.alert("Please connect to Metamask.");
     }
@@ -52,12 +57,32 @@ App = {
 
   loadAccount: async () => {
     // Set the current blockchain account
-    App.account = web3.eth.accounts[0];
+
+    async function getAccounts() {
+      const res = [];
+      //   wallet address
+      const accounts = await web3.eth.getAccounts();
+      for (const account of accounts) {
+        const balanceWei = await web3.eth.getBalance(account);
+        const balance = web3.utils.fromWei(balanceWei);
+        res.push({
+          account,
+          balance,
+        });
+      }
+      return res;
+    }
+    const accounts = await getAccounts();
+    console.log("accounts", accounts);
+    App.account = accounts[0];
+    $("#wallet").innerText = web3.utils.toWei(accounts[0].balance);
+    $("#address-wallet").innerText = accounts[0].account;
   },
 
   loadContract: async () => {
     // Create a JavaScript version of the smart contract
     const todoList = await $.getJSON("TodoList.json");
+    console.log("todoList", todoList);
     App.contracts.TodoList = TruffleContract(todoList);
     App.contracts.TodoList.setProvider(App.web3Provider);
 
@@ -86,6 +111,7 @@ App = {
 
   renderTasks: async () => {
     // Load the total task count from the blockchain
+    console.log("App.todoList", App.todoList);
     const taskCount = await App.todoList.taskCount();
     const $taskTemplate = $(".taskTemplate");
 
