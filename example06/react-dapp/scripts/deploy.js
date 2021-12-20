@@ -8,9 +8,10 @@ async function main() {
   const Greeter = await hre.ethers.getContractFactory("Greeter");
   const gretter = await Greeter.deploy("Hello world!");
 
+  // const Token = await hre.ethers.getContractFactory("Token");
+  // const token = await Token.deploy();
   const Token = await hre.ethers.getContractFactory("Token");
-  const token = await Token.deploy();
-
+  const token = await Token.deploy("Token", "Siven");
   await gretter.deployed();
   await token.deployed();
   console.log("Gretter deployed to :", gretter.address);
