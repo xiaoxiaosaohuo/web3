@@ -1,5 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
+require("dotenv").config();
 
+const { API_URL, PRIVATE_KEY } = process.env;
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -18,13 +20,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: "0.8.4", // make sure the version matches the one in smart contract file
+  defaultNetwork: "ropsten",
   networks: {
-    rinkeby: {
-      // defining our test network
-      url: "https://eth-rinkeby.alchemyapi.io/v2/wrH4-_CMsExq3G6iypOTgtbqb5OltdDg", //alchemy api key
-      accounts: [
-        "ec6b9c1bffdd7475cf738bb9d7d2f2154984fbb5cce065eb421069ca41185c1b",
-      ], // metamask rinkeby account private key
+    ropsten: {
+      url: API_URL,
+      accounts: [`0x${PRIVATE_KEY}`],
     },
   },
 };
